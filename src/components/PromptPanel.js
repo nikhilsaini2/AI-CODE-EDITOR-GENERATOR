@@ -2,12 +2,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Sparkles, Send, History, Zap, Bot, Settings, Code, Star, 
-  ChevronDown, ChevronRight, HelpCircle, Target, Brain,
-  Wand2, Lightbulb, Rocket, Globe, Smartphone, Database,
-  ShoppingCart, Users, BarChart3, Calendar, Mail, Lock,
-  FileText, Layout, Palette, Search, Filter, Plus, Copy,
-  ArrowRight, Clock, Bookmark, Trash2, Edit3
+  Sparkles, Zap, Code, Target, Brain,
+  Wand2, Rocket, FileText, Layout, Clock
 } from 'lucide-react';
 
 const PromptPanel = React.memo(({ 
@@ -15,9 +11,6 @@ const PromptPanel = React.memo(({
   setPrompt, 
   onGenerate, 
   isLoading, 
-  files, 
-  activeFile, 
-  setActiveFile,
   promptHistory,
   onSelectFromHistory 
 }) => {
@@ -26,43 +19,14 @@ const PromptPanel = React.memo(({
   const [charCount, setCharCount] = useState(prompt.length);
   const textareaRef = useRef(null);
   
-  // New state for enhanced features
+  // State for chat mode functionality
   const [aiMode, setAiMode] = useState('prompt'); // 'prompt' or 'chat'
-  const [showTemplates, setShowTemplates] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [showTips, setShowTips] = useState(false);
-  const [contextMode, setContextMode] = useState('none'); // 'none', 'file', 'folder', 'selection'
-  const [selectedCode, setSelectedCode] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
-  const [historyItems, setHistoryItems] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  
-  // AI Response Settings
-  const [aiSettings, setAiSettings] = useState({
-    framework: 'react',
-    language: 'javascript',
-    codeStyle: 'modern',
-    includeComments: true,
-    includeExplanations: true,
-    complexityLevel: 'intermediate'
-  });
 
   useEffect(() => {
     setCharCount(prompt.length);
   }, [prompt]);
 
-  useEffect(() => {
-    // Initialize history items with enhanced data
-    const enhancedHistory = promptHistory.map((item, index) => ({
-      id: index,
-      text: item,
-      timestamp: new Date(Date.now() - (promptHistory.length - index) * 60000),
-      starred: false,
-      label: '',
-      context: 'none'
-    }));
-    setHistoryItems(enhancedHistory);
-  }, [promptHistory]);
 
   const handleChatSubmit = useCallback(() => {
     if (!prompt.trim()) return;

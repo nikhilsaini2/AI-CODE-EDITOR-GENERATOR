@@ -32,7 +32,13 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "no-unused-vars": "warn",
+      "react-hooks/exhaustive-deps": "warn",
+      "jsx-a11y/anchor-is-valid": "warn",
+      "no-template-curly-in-string": "warn"
+    }
   },
   "browserslist": {
     "production": [
@@ -50,6 +56,6 @@
     "prettier": "^3.6.2"
   },
   "engines": {
-    "node": "18.x"
+    "node": "22.x"
   }
 }

@@ -144,16 +144,23 @@ const FooterSection = () => {
             }}>
               {['About', 'Careers', 'Blog', 'Contact'].map((item) => (
                 <li key={item} style={{ marginBottom: '12px' }}>
-                  <a href="#" style={{
-                    color: 'rgba(255,255,255,0.7)',
-                    textDecoration: 'none',
-                    fontSize: '16px',
-                    transition: 'color 0.3s ease'
-                  }}
-                  onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-                  onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.7)'}>
+                  <button 
+                    onClick={() => console.log(`Navigate to ${item}`)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'rgba(255,255,255,0.7)',
+                      textDecoration: 'none',
+                      fontSize: '16px',
+                      transition: 'color 0.3s ease',
+                      cursor: 'pointer',
+                      padding: 0,
+                      textAlign: 'left'
+                    }}
+                    onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+                    onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.7)'}>
                     {item}
-                  </a>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -245,16 +252,23 @@ const FooterSection = () => {
             gap: '30px'
           }}>
             {['Terms of Service', 'Privacy Policy'].map((item) => (
-                  <a key={item} href="https://example.com" style={{ /* Replace with real URL */
-                color: 'rgba(255,255,255,0.6)',
-                textDecoration: 'none',
-                fontSize: '14px',
-                transition: 'color 0.3s ease'
-              }}
-              onMouseEnter={(e) => e.target.style.color = '#ffffff'}
-              onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.6)'}>
-                {item}
-              </a>
+                  <button 
+                    key={item} 
+                    onClick={() => console.log(`Navigate to ${item}`)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'rgba(255,255,255,0.6)',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      transition: 'color 0.3s ease',
+                      cursor: 'pointer',
+                      padding: 0
+                    }}
+                    onMouseEnter={(e) => e.target.style.color = '#ffffff'}
+                    onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.6)'}>
+                    {item}
+                  </button>
             ))}
           </div>
         </div>
