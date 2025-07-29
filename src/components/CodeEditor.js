@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useEditorState } from '../state/editorStateStore';
 import Editor, { loader } from '@monaco-editor/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
   FiCopy, 
   FiCheck, 
@@ -31,20 +31,18 @@ loader.config({
 
 const CodeEditor = React.memo(({ showPreview }) => {
   // Using global state for files and activeFile
-  const { files, activeFile, setFiles, setActiveFile, editorState, setEditorState } = useEditorState();
+  const { files, activeFile, setFiles, editorState } = useEditorState();
   const [copied, setCopied] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [monacoError, setMonacoError] = useState(false);
+  const [monacoError] = useState(false);
 
   // Use global editor state - Memoized selectors for performance
   const editorTheme = useMemo(() => editorState.editorTheme, [editorState.editorTheme]);
   const fontSize = useMemo(() => editorState.fontSize, [editorState.fontSize]);
-  const unsavedChanges = useMemo(() => editorState.unsavedChanges, [editorState.unsavedChanges]);
   const autoSave = useMemo(() => editorState.autoSave, [editorState.autoSave]);
-  const lastSaved = useMemo(() => editorState.lastSaved, [editorState.lastSaved]);
   const selection = useMemo(() => editorState.selection, [editorState.selection]);
-  const { setEditorTheme, setFontSize, setUnsavedChanges, setAutoSave, setLastSaved, setSelection, addUnsavedFile, removeUnsavedFile } = useEditorState();
+  const { setEditorTheme, setFontSize, setLastSaved, addUnsavedFile, removeUnsavedFile } = useEditorState();
   
   // Advanced editor features state
   const [multiCursorPositions, setMultiCursorPositions] = useState([]);
