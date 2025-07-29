@@ -2,8 +2,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Sparkles, Zap, Code, Target, Brain,
-  Wand2, Rocket, FileText, Layout, Clock
+  Sparkles, Zap, Wand2, Rocket, FileText, Clock
 } from 'lucide-react';
 
 const PromptPanel = React.memo(({ 
@@ -19,50 +18,15 @@ const PromptPanel = React.memo(({
   const [charCount, setCharCount] = useState(prompt.length);
   const textareaRef = useRef(null);
   
-  // State for chat mode functionality
-  const [aiMode, setAiMode] = useState('prompt'); // 'prompt' or 'chat'
-  const [chatHistory, setChatHistory] = useState([]);
-
   useEffect(() => {
     setCharCount(prompt.length);
   }, [prompt]);
 
-
-  const handleChatSubmit = useCallback(() => {
-    if (!prompt.trim()) return;
-    
-    const newMessage = {
-      id: Date.now(),
-      text: prompt,
-      type: 'user',
-      timestamp: new Date()
-    };
-    
-    setChatHistory(prev => [...prev, newMessage]);
-    
-    // Simulate AI response (in real implementation, this would call your AI service)
-    setTimeout(() => {
-      const aiResponse = {
-        id: Date.now() + 1,
-        text: "I understand your request. Let me help you create that code with the specified requirements.",
-        type: 'ai',
-        timestamp: new Date()
-      };
-      setChatHistory(prev => [...prev, aiResponse]);
-    }, 1000);
-    
-    setPrompt('');
-  }, [prompt, setPrompt]);
-
   const handleKeyPress = useCallback((e) => {
     if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-      if (aiMode === 'chat') {
-        handleChatSubmit();
-      } else {
-        onGenerate();
-      }
+      onGenerate();
     }
-  }, [aiMode, handleChatSubmit, onGenerate]);
+  }, [onGenerate]);
 
   const handleInputChange = useCallback((e) => {
     setPrompt(e.target.value);
@@ -117,28 +81,6 @@ const PromptPanel = React.memo(({
     ]
   };
 
-  const aiTips = [
-    {
-      icon: Target,
-      title: 'Be Specific',
-      description: 'Include exact requirements, styling preferences, and functionality details for better results.'
-    },
-    {
-      icon: Layout,
-      title: 'Mention Framework',
-      description: 'Specify your preferred framework (React, Vue, Angular) and styling approach (CSS, Tailwind, styled-components).'
-    },
-    {
-      icon: Code,
-      title: 'Context Matters',
-      description: 'Use file or folder context to generate code that fits your existing project structure.'
-    },
-    {
-      icon: Brain,
-      title: 'Iterative Refinement',
-      description: 'Use chat mode to refine and improve generated code through conversation.'
-    }
-  ];
 
   return (
     <div style={{ 
