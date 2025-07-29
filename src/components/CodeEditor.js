@@ -8,21 +8,9 @@ import {
   FiCheck, 
   FiMaximize2, 
   FiMinimize2, 
-  FiSearch, 
   FiSettings,
-  FiSave,
-  FiRotateCcw,
-  FiEdit3,
   FiCode,
-  FiEye,
-  FiEyeOff,
-  FiTarget,
   FiZap,
-  FiRefreshCw,
-  FiBox,
-  FiChevronDown,
-  FiChevronRight,
-  FiDroplet,
   FiColumns,
   FiSliders,
   FiX,
@@ -30,7 +18,8 @@ import {
   FiMinus,
   FiPlus,
   FiHash,
-  FiMap
+  FiMap,
+  FiDroplet
 } from 'react-icons/fi';
 
 // Configure Monaco loader once at module level
