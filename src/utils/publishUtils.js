@@ -1,5 +1,5 @@
 // utils/publishUtils.js
-import JSZip from 'jszip';
+// import JSZip from 'jszip'; // Remove unused import
 
 const NETLIFY_API_BASE = 'https://api.netlify.com/api/v1';
 const GITHUB_API_BASE = 'https://api.github.com';

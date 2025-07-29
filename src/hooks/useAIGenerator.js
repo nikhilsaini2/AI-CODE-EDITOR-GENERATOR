@@ -6,7 +6,8 @@ const useAIGenerator = () => {
   const [isLoading, setIsLoading] = useState(false);
 
 
-  // Intelligent local code generation
+  // Intelligent local code generation function (unused for now)
+  /*
   const generateIntelligentCode = (prompt) => {
     const lowerPrompt = prompt.toLowerCase();
     
@@ -31,6 +32,7 @@ const useAIGenerator = () => {
       return generateGenericApp(prompt);
     }
   };
+  */
 
   // Calculator Generator
   const generateCalculator = (prompt) => {

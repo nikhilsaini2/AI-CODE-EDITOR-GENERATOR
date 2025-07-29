@@ -92,7 +92,7 @@ export const EditorStateProvider = ({ children }) => {
       ...state,
       lastModified: Date.now()
     });
-  }, []);
+  }, [fileStates]); // Added fileStates as dependency
   
   const getFileState = useCallback((filename) => {
     if (!filename) return null;

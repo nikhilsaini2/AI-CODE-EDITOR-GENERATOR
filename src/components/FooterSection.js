@@ -245,7 +245,7 @@ const FooterSection = () => {
             gap: '30px'
           }}>
             {['Terms of Service', 'Privacy Policy'].map((item) => (
-              <a key={item} href="#" style={{
+                  <a key={item} href="https://example.com" style={{ /* Replace with real URL */
                 color: 'rgba(255,255,255,0.6)',
                 textDecoration: 'none',
                 fontSize: '14px',
