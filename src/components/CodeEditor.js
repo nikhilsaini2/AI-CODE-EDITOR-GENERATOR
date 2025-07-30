@@ -31,7 +31,7 @@ loader.config({
 
 const CodeEditor = React.memo(({ showPreview }) => {
   // Using global state for files and activeFile
-  const { files, activeFile, setFiles, editorState } = useEditorState();
+  const { files, activeFile, setFiles, editorState, setEditorState, setSelection } = useEditorState();
   const [copied, setCopied] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -44,29 +44,13 @@ const CodeEditor = React.memo(({ showPreview }) => {
   const selection = useMemo(() => editorState.selection, [editorState.selection]);
   const { setEditorTheme, setFontSize, setLastSaved, addUnsavedFile, removeUnsavedFile } = useEditorState();
   
-  // Advanced editor features state
-  const [multiCursorPositions, setMultiCursorPositions] = useState([]);
-  const [codeBlocks, setCodeBlocks] = useState({});
-  const [foldedRanges, setFoldedRanges] = useState(new Set());
-  const [bracketPairs, setBracketPairs] = useState([]);
-  const [errorMarkers, setErrorMarkers] = useState([]);
-  const [suggestions, setSuggestions] = useState([]);
-  const [showFindReplace, setShowFindReplace] = useState(false);
-  const [findText, setFindText] = useState('');
-  const [replaceText, setReplaceText] = useState('');
-  const [matchCount, setMatchCount] = useState(0);
-  const [currentMatch, setCurrentMatch] = useState(0);
-  const [showIntelliSense, setShowIntelliSense] = useState(false);
-  const [intelliSensePosition, setIntelliSensePosition] = useState({ line: 0, column: 0 });
-  const [definitions, setDefinitions] = useState(new Map());
-  const [references, setReferences] = useState(new Map());
   const [wordWrap, setWordWrap] = useState('on');
   const [showMinimap, setShowMinimap] = useState(false);
   const [showLineNumbers, setShowLineNumbers] = useState('on');
   const [tabSize, setTabSize] = useState(2);
   
   // Enhanced customization state
-  const [customThemes, setCustomThemes] = useState({
+  const [customThemes] = useState({
     'custom-dark': {
       base: 'vs-dark',
       inherit: true,
@@ -106,21 +90,21 @@ const CodeEditor = React.memo(({ showPreview }) => {
   });
   
   const [autoFormat, setAutoFormat] = useState(true);
-  const [formatOnSave, setFormatOnSave] = useState(true);
-  const [enableLinting, setEnableLinting] = useState(true);
-  const [showDiffView, setShowDiffView] = useState(false);
+  const [enableLinting] = useState(true);
   const [splitViewMode, setSplitViewMode] = useState('single'); // 'single', 'side-by-side', 'diff'
-  const [enableMultiCursor, setEnableMultiCursor] = useState(true);
   const [cursorBlinking, setCursorBlinking] = useState('blink');
   const [renderWhitespace, setRenderWhitespace] = useState('selection');
-  const [smoothScrolling, setSmoothScrolling] = useState(true);
+  const [smoothScrolling] = useState(true);
   const [bracketPairColorization, setBracketPairColorization] = useState(true);
+  
+  // Advanced editor features state
+  const [errorMarkers, setErrorMarkers] = useState([]);
+  const [intelliSensePosition, setIntelliSensePosition] = useState({ line: 0, column: 0 });
   
   // Refs
   const editorRef = useRef(null);
   const monacoRef = useRef(null);
   const autoSaveTimeoutRef = useRef(null);
-  const findWidgetRef = useRef(null);
   const isInitialized = useRef(false);
   const modelRef = useRef(null);
 
@@ -192,6 +176,18 @@ const CodeEditor = React.memo(({ showPreview }) => {
     }
   }, [activeFile, setFiles]);
 
+  // Define formatCode and manualSave early to avoid hoisting issues
+  const formatCode = useCallback(() => {
+    if (editorRef.current) {
+      editorRef.current.getAction('editor.action.formatDocument').run();
+    }
+  }, []);
+
+  const manualSave = useCallback(() => {
+    removeUnsavedFile(activeFile);
+    setLastSaved(new Date());
+  }, [activeFile, removeUnsavedFile, setLastSaved]);
+
   // Utility function to update error markers
   const updateErrorMarkers = useCallback((editor, monaco) => {
     if (!editor || !monaco) return;
@@ -216,7 +212,7 @@ const CodeEditor = React.memo(({ showPreview }) => {
             startColumn: 1,
             endLineNumber: index + 1,
             endColumn: line.length + 1,
-            message: 'Did you mean "console.log"?'
+            message: 'Did you mean \"console.log\"?'
           });
         }
         
@@ -253,7 +249,7 @@ const CodeEditor = React.memo(({ showPreview }) => {
     // Set markers on the model
     monaco.editor.setModelMarkers(model, 'owner', markers);
     setErrorMarkers(markers);
-  }, []);
+  }, [setErrorMarkers]);
 
   const handleEditorDidMount = useCallback((editor, monaco) => {
     editorRef.current = editor;
@@ -351,14 +347,14 @@ const CodeEditor = React.memo(({ showPreview }) => {
             {
               label: 'function',
               kind: monaco.languages.CompletionItemKind.Keyword,
-              insertText: 'function ${1:name}(${2:params}) {\n\t${3}\n}',
+              insertText: 'function ${1:name}(${2:params}) {\\n\\t${3}\\n}',
               insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
               documentation: 'Create a new function'
             },
             {
               label: 'arrow function',
               kind: monaco.languages.CompletionItemKind.Snippet,
-              insertText: 'const ${1:name} = (${2:params}) => {\n\t${3}\n};',
+              insertText: 'const ${1:name} = (${2:params}) => {\\n\\t${3}\\n};',
               insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
               documentation: 'Create an arrow function'
             }
@@ -395,18 +391,7 @@ const CodeEditor = React.memo(({ showPreview }) => {
       contentChangeListener,
       cursorChangeListener
     ];
-  }, [customThemes, enableLinting, updateErrorMarkers]);
-
-  const manualSave = () => {
-    removeUnsavedFile(activeFile);
-    setLastSaved(new Date());
-  };
-
-  const formatCode = () => {
-    if (editorRef.current) {
-      editorRef.current.getAction('editor.action.formatDocument').run();
-    }
-  };
+  }, [customThemes, enableLinting, formatCode, manualSave, selection, setEditorState, setIntelliSensePosition, setSelection, updateErrorMarkers]);
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
@@ -623,7 +608,7 @@ const CodeEditor = React.memo(({ showPreview }) => {
         }
       }
     }
-  }, [activeFile, getLanguageFromFile]); // Removed files and editorState from dependencies
+  }, [activeFile, files, getLanguageFromFile]);
   
   // Debug information (only in development)
   if (process.env.NODE_ENV === 'development') {
@@ -702,7 +687,7 @@ const CodeEditor = React.memo(({ showPreview }) => {
         // Prevent re-mounting by not using activeFile as key
       />
     );
-  }, [editorOptions]); // Removed editorTheme from deps to force dark theme
+  }, [activeFile, editorOptions, files, getLanguageFromFile, handleEditorChange, handleEditorDidMount]);
 
   return (
     <div 
